@@ -11,7 +11,8 @@ public class ScannerEpsi {
     // Se usará este string en vez de buffer para operadores de dos caracteres
     
     public ScannerEpsi(String entrada){
-        this.entrada = entrada + '$';
+        String text = entrada.replaceAll("\n", "! ");
+        this.entrada = text.replaceAll("\t", " ") + "$";
     };
     
     public String getBuffer(){
@@ -32,7 +33,7 @@ public class ScannerEpsi {
     //Operadores relacionales
     char OperadorS[] = {'+', '-', '/', '*', '<', '>', '='}; 
     String OperadorC[] = {"<=", ">=", "=="};                     
-    char Delimitador[] = {'(', ')', '{', '}', '[', ']',';', ',', ':', '"', '\''}; 
+    char Delimitador[] = {'(', ')', '{', '}', '[', ']',';', ',', ':', '"', '\'', '.'}; 
     
     public int getTamReservada(){
         return Reservada.length;
@@ -108,6 +109,17 @@ public class ScannerEpsi {
         }
         return 500+i;
     }
+
+    private int BuscarSalto(String x){
+        if(x.equals("!")){
+            return 600;
+        }
+        return 911;
+    }   
+    
+     private boolean esSalto(char x){
+        return x == '!';
+    }
             
     private boolean esOperadorS(char x){
         for(int i=0; i<OperadorS.length;i++){
@@ -137,7 +149,7 @@ public class ScannerEpsi {
     }
     
     private boolean esComentario(char x){
-        return x == '#';
+        return x == '#' || x == '%';
     }
     
     public int obtenerToken(){
@@ -153,9 +165,10 @@ public class ScannerEpsi {
                 switch (opc){
                     case 1: return BuscarReservado(buffer);
                     case 2: return BuscarNumero(buffer);
-                    case 3: return 400; //IMPORTANTE SOLUCIONAAAAAAAAAAR
+                    case 3: return BuscarOperadorC(operadorC);
                     case 4: return BuscarOperadorS(buffer);
                     case 5: return BuscarDelimitador(buffer);
+                    case 6: return BuscarSalto(buffer);
                 }//Fin switch
             }else{
                 buffer = buffer.trim();
@@ -177,8 +190,10 @@ public class ScannerEpsi {
                             opc = 4; flag++;
                         }else if(esDelimitador(sgte)){
                             opc = 5; flag++;
-                        }else if(esComentario(sgte)){
+                        }else if(esSalto(sgte)){
                             opc = 6; flag++;
+                        }else if(esComentario(sgte)){
+                            opc = 7; flag++;
                         }else if(sgte != ' '){
                             return 555;
                         }else{
@@ -193,6 +208,7 @@ public class ScannerEpsi {
                             return BuscarReservado(buffer);
                         }
                         break;
+                        
                     case 2:
                         if(Character.isDigit(sgte) || sgte == '.'){
                             buffer += sgte; opc = 2;
@@ -200,17 +216,35 @@ public class ScannerEpsi {
                             return BuscarNumero(buffer);
                         }
                         break;
+                        
                     case 3:
                         pos++;
                         return BuscarOperadorC(operadorC);
+                        
                     case 4:
                         return BuscarOperadorS(buffer);
 
                     case 5: 
                         return BuscarDelimitador(buffer);
                         
+                    case 6:
+                        return BuscarSalto(buffer);
+                        
+                    case 7:
+                        
+                        if (entrada.charAt(pos-1) == '#'){
+                           while(entrada.charAt(pos) != '!'){
+                            pos++;
+                            } 
+                        }else if (entrada.charAt(pos-1) == '%'){
+                            while(entrada.charAt(pos) != '%'){
+                            pos++;
+                            }
+                            pos++;
+                        }
+                        
+                    return 600;
                     
-           
                 }//Fin switch
             }//Fin if
             

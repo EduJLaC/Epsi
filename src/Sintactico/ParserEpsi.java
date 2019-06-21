@@ -2,6 +2,7 @@
 package Sintactico;
 
 
+import Lexico.ScannerEpsi;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -11,29 +12,28 @@ public class ParserEpsi {
     String cadena;
     private int apunta;
     private int pos;
-    private final TAS t;
+    private final TAS_Accion ta;
+    private final TAS_IrA tr;
+    private ScannerEpsi lexico;
     private String UIpila;
     private String UIentrada;
     private String UIsalida;
     ;
     
     ParserEpsi(){
-        /*
-            IMPORTANTE MODIFICAAAAAAAAAAAAAR
-        */
         pila.push("0");     // Primer estado en la pila
         apunta = 0;         // Apunto al primer elemento de la cadena ingesada
         pos = 0;            // Posicion actual
         UIpila = pila.toString() + "\n";  // String de la pila a mostrar
         UIsalida = "";      // String de la salida a mostrar
-        t = new TAS();
+        ta = new TAS_Accion();
+        tr = new TAS_IrA();
     }
     
     public String getCadena(){
         return cadena;
     }
-    
-    // METODOS GETTER PARA USARLOS EN INTERFAZ GRÁFICA
+      
     public String getPila(){
         return UIpila; 
     } 
@@ -48,10 +48,10 @@ public class ParserEpsi {
         
     public void Leer(String cadena){
         this.cadena = cadena + "$";
-        UIentrada = this.cadena + "\n";
+        UIentrada = this.cadena + "\n";        
         Sintactico();
     }
-    
+      
     private String Lexico(){
         String a = "";
         
@@ -75,16 +75,19 @@ public class ParserEpsi {
         String retEntrada = "";                 // Retiene la cadena de entrada al momento de reducir
         while(true){
             String s = pila.getFirst();         // Recibe el estado 
-            String a = Lexico();                // Recibe simbolo de la cadena
-            String accion = t.Accion(s, a);     // Retorna D o R
+            String a = Integer.toString(lexico.obtenerToken());    // Recibe simbolo de la cadena
+            String accion = ta.Accion(s, a);     // Retorna D o R
             
             if(accion.charAt(0) == 'D'){
                 String estado = "";
                 String entrada = cadena;
-                estado += accion.charAt(1);
+                
+                for (int i=1; i<accion.length(); i++){
+                    estado += accion.charAt(i);
+                }
+                
                 pila.push(a);
                 pila.push(estado);
-                pos = apunta;
                 UIpila += pila.toString() + "\n";   // Agregamos los estados de la pila para mostrar en pantalla
                 
                 retEntrada="";
@@ -96,28 +99,39 @@ public class ParserEpsi {
                 UIentrada += "\n";
                 UIsalida += accion + "\n";
             }else if(accion.charAt(0) == 'R'){
-                String reduce = "";
-                String simbolo = "";
+                String terminal = "";
                 String estado;
-                reduce += accion.charAt(6); // MODIFICAAAAAAAAAAAAAR
-                /* Ya que en cada iteracion "apunta" aumenta en 1 debido a la llamada de Lexico, 
-                con este decremento nos aseguramos de apuntar al mismo simbolo que será 
-                reemplazado cuando se llame a D */
-                apunta--;                   
+                int nro_t = 0;
                 
-                int size = pila.size();
-                for(int i = 0; i < size; i++){
-                    if(!pila.getFirst().equals(reduce)){
-                        pila.pop();     // Desapila hasta encontrar el simbolo del lado derecho
-                    }else{
-                        pila.pop();     // Desapila el simbolo a reducir
-                        break;
+                for(int i = 0; i<accion.length(); i++){
+                    if(accion.charAt(i) == ' '){
+                        nro_t++;
                     }
                 }
-                    // PROBABLE BUCLE FOR PARA CAPTURAR UN NO TERMINAL COMPUESTO 
-                simbolo += accion.charAt(3); //MODIFICAAAAAAAAAAAAAAAAAAR
-                estado = t.Ir_A(pila.getFirst(), simbolo); 
-                pila.push(simbolo);     // Apila el simbolo encontrar el simbolo del lado izquierdo 
+                
+                nro_t = nro_t - 2;
+                
+                for(int j = 0; j<2*nro_t; j++){
+                    pila.pop();
+                }
+
+                int cont = 1;
+                for (int i = 0; i<accion.length(); i++){
+                    if(accion.charAt(i) == ' '){
+                        break;
+                    }
+                    cont++;
+                }
+                
+                for ( int i = cont; i<accion.length(); i++){
+                    if(accion.charAt(i) == ' '){
+                        break;
+                    }
+                    terminal += accion.charAt(i);
+                }
+                
+                estado = tr.Ir_A(pila.getFirst(), terminal); 
+                pila.push(terminal);     // Apila el simbolo encontrar el simbolo del lado izquierdo 
                 pila.push(estado);
                 UIpila += pila.toString() + "\n";   // Agregamos los estados de la pila para mostrar en pantalla
                 UIentrada += retEntrada + "\n";
@@ -131,3 +145,4 @@ public class ParserEpsi {
         }// Fin del while
     }//Fin de Sintactico  
 }
+
