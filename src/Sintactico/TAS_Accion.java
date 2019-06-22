@@ -1,13 +1,15 @@
 
 package Sintactico;
 
+import java.util.Arrays;
+
 
 public class TAS_Accion {
     
     private final String ACCION[][] = new String[283][48];
     private final String R[] = new String[122];
     
-    TAS_Accion(){
+    public TAS_Accion(){
         int f;
         
         R[1] = "R1 PRINCIPAL -> class id { INSTRUCCION";
@@ -854,7 +856,7 @@ public class TAS_Accion {
         int e = Integer.parseInt(estado) + 1;
         int t = 0;
         
-        for(int i = 0;  i < 48; i++){
+        for(int i = 0;  i < 47; i++){
             if(ACCION[0][i].equals(terminal)){
                 t = i;
             }
@@ -862,5 +864,5 @@ public class TAS_Accion {
         
         return ACCION[e][t];
     }
-    
+      
 }

@@ -98,7 +98,7 @@ public class TAS_IrA {
         
         
         Ir_A[0][22] = "INSTRUCCION";
-        Ir_A[5][22] = "5";
+        //Ir_A[5][22] = "5";
         Ir_A[7][22] = "35";
         Ir_A[8][22] = "36";
         Ir_A[9][22] = "38";
@@ -219,7 +219,7 @@ public class TAS_IrA {
         Llenar2(198);
         Llenar2(199);
         Llenar2(264);
-        
+        Ir_A[5][22] = "5";
     }
     
     private void Llenar(int fil){
@@ -246,7 +246,7 @@ public class TAS_IrA {
         int e = Integer.parseInt(estado) + 1;
         int t = 0;
         
-        for(int i = 0; i < 2; i++){
+        for(int i = 0; i < 34; i++){
             if(Ir_A[0][i].equals(terminal)){
                 t = i;
             }

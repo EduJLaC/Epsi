@@ -15,6 +15,10 @@ public class ScannerEpsi {
         this.entrada = text.replaceAll("\t", " ") + "$";
     };
     
+    public String getEntrada(){
+        return entrada;
+    }
+    
     public String getBuffer(){
         return buffer;
     }
