@@ -12,8 +12,9 @@ public class ParserEpsi {
     String cadena;
     private int apunta;
     private int pos;
-    private final TAS_Accion ta;
+   // private final TAS_Accion ta;
     private final TAS_IrA tr;
+    private final TAS_Accion ta;
     private String UIpila;
     private String UIentrada;
     private String UIsalida;
@@ -99,7 +100,7 @@ public class ParserEpsi {
                     pila.push(a);
                     pila.push(estado);
                     UIpila += pila.toString() + "\n";   // Agregamos los estados de la pila para mostrar en pantalla
-
+                    UIsalida += accion + "\n";
                 }else if(accion.charAt(0) == 'R'){
                     String terminal = "";
                     String estado;
@@ -136,7 +137,7 @@ public class ParserEpsi {
                     pila.push(terminal);     // Apila el simbolo encontrar el simbolo del lado izquierdo 
                     pila.push(estado);
                     UIpila += pila.toString() + "\n";   // Agregamos los estados de la pila para mostrar en pantalla
-                    UIentrada += retEntrada + "\n";
+//                    UIentrada += retEntrada + "\n";
                     UIsalida += accion + "\n";
                 }else if(accion.equals("ACEPTAR")){
                     UIsalida += accion + "\n";

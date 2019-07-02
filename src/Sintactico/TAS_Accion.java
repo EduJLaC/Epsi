@@ -1,4 +1,3 @@
-
 package Sintactico;
 
 import java.util.Arrays;
